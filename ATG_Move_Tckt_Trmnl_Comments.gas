@@ -1,0 +1,249 @@
+Program.Sub.ScreenSU.Start
+gui.Form1..create
+gui.Form1..caption("Move Ticket Terminal Maintenance")
+gui.Form1..size(10245,5115)
+gui.Form1..position(0,0)
+gui.Form1..event(unload,form1_unload)
+gui.Form1..alwaysontop(False)
+gui.Form1..fontname("Arial")
+gui.Form1..fontsize(8)
+gui.Form1..forecolor(0)
+gui.Form1..fontstyle(,,,,)
+gui.Form1..BackColor(-2147483633)
+gui.Form1..controlbox(True)
+gui.Form1..maxbutton(True)
+gui.Form1..minbutton(True)
+gui.Form1..mousepointer(0)
+gui.Form1..moveable(True)
+gui.Form1..sizeable(True)
+gui.Form1..ShowInTaskBar(True)
+gui.Form1..titlebar(True)
+gui.Form1.txtTrmnl.create(textbox,"",True,855,300,0,395,600,True,0,Arial,8,-2147483643,1)
+gui.Form1.lbl1.create(label,"Terminal",True,1110,255,1,395,410,True,0,Arial,8,-2147483633,0)
+gui.Form1.lbl2.create(label,"Comments",True,1965,255,1,1455,410,True,0,Arial,8,-2147483633,0)
+gui.Form1.cmdAdd.create(button)
+gui.Form1.cmdAdd.caption("Add/Update")
+gui.Form1.cmdAdd.visible(True)
+gui.Form1.cmdAdd.size(1005,375)
+gui.Form1.cmdAdd.zorder(0)
+gui.Form1.cmdAdd.position(395,1045)
+gui.Form1.cmdAdd.enabled(True)
+gui.Form1.cmdAdd.fontname("Arial")
+gui.Form1.cmdAdd.fontsize(8)
+gui.Form1.cmdAdd.event(click,cmdadd_click)
+gui.Form1.cmdDelete.create(button)
+gui.Form1.cmdDelete.caption("Delete")
+gui.Form1.cmdDelete.visible(True)
+gui.Form1.cmdDelete.size(855,375)
+gui.Form1.cmdDelete.zorder(0)
+gui.Form1.cmdDelete.position(2530,1045)
+gui.Form1.cmdDelete.enabled(True)
+gui.Form1.cmdDelete.fontname("Arial")
+gui.Form1.cmdDelete.fontsize(8)
+gui.Form1.cmdDelete.event(click,cmddelete_click)
+gui.Form1.txtComment.create(textbox,"",True,4665,300,0,1455,600,True,0,Arial,8,-2147483643,1)
+gui.Form1.lvw1.create(listview)
+gui.Form1.lvw1.view(3)
+gui.Form1.lvw1.addlistviewcolumn("Terminal",1000,0)
+gui.Form1.lvw1.addlistviewcolumn("Comments",3000,0)
+gui.Form1.lvw1.addlistviewcolumn("Printer",2700,0)
+gui.Form1.lvw1.addlistviewcolumn("ScrapPrinter",2000,0)
+gui.Form1.lvw1.visible(True)
+gui.Form1.lvw1.size(9420,2550)
+gui.Form1.lvw1.zorder(0)
+gui.Form1.lvw1.position(395,1600)
+gui.Form1.lvw1.enabled(True)
+gui.Form1.lvw1.fontname("Arial")
+gui.Form1.lvw1.fontsize(8)
+gui.Form1.lvw1.event(itemclick,lvw1_click)
+gui.Form1.cmdClear.create(button)
+gui.Form1.cmdClear.caption("Clear")
+gui.Form1.cmdClear.visible(True)
+gui.Form1.cmdClear.size(855,375)
+gui.Form1.cmdClear.zorder(0)
+gui.Form1.cmdClear.position(1530,1045)
+gui.Form1.cmdClear.enabled(True)
+gui.Form1.cmdClear.fontname("Arial")
+gui.Form1.cmdClear.fontsize(8)
+gui.Form1.cmdClear.event(click,cmdclear_click)
+gui.Form1.txtPrinter.create(textbox,"",True,2790,300,0,6300,600,True,0,Arial,8,-2147483643,1)
+gui.Form1.txtPrinter.event(dblclick,Printerdialog)
+gui.Form1.lbl3.create(label,"Printer",True,1185,255,1,6300,400,True,0,Arial,8,-2147483633,0)
+gui.Form1.txtScrapPrinter.create(textbox,"",True,2775,300,0,6305,1265,True,0,Arial,8,-2147483643,1)
+gui.Form1.lbl4.create(label,"Scrap Printer (optional)",True,1935,255,1,6305,980,True,0,Arial,8,-2147483633,0)
+gui.Form1.txtTrmnl.tabstop(True)
+gui.Form1.txtTrmnl.tabindex(1)
+gui.Form1.txtComment.tabstop(True)
+gui.Form1.txtComment.tabindex(2)
+gui.Form1.txtPrinter.tabstop(True)
+gui.Form1.txtPrinter.tabindex(3)
+gui.Form1.cmdAdd.tabstop(True)
+gui.Form1.cmdAdd.tabindex(5)
+gui.Form1.cmdClear.tabstop(True)
+gui.Form1.cmdClear.tabindex(7)
+gui.Form1.cmdDelete.tabstop(True)
+gui.Form1.cmdDelete.tabindex(8)
+
+
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+
+Variable.Global.iOrdinal.Declare(Long,0)
+Variable.Global.sKey.Declare(String)
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+'Coded by: JCT
+'Project Start Date: 05/06/2011
+'Hooks:
+'  Custom on new menu item
+'Other Components:
+'  used with Print_Report_WIP_Operation_Label.gas
+'  sql table ATG_Move_Tckt_Setup
+
+'open ODBC connection
+F.ODBC.Connection!Con.OpenConnection(V.Ambient.PDSN,V.Ambient.PUser,V.Ambient.PPass)
+
+'look for existing records and load list view
+
+F.Intrinsic.Control.CallSub(Buildlistview)
+
+'show screen
+Gui.Form1..Show
+
+Program.Sub.Main.End
+
+program.sub.form1_unload.start
+
+'close ODBC connection and end program
+F.ODBC.Connection!Con.Close
+F.Intrinsic.Control.End
+
+program.sub.form1_unload.end
+
+program.sub.cmddelete_click.start
+
+
+V.Local.sDelete.Declare(String)
+V.Local.iOrdinal.Declare(Long)
+
+'delete the record from the table
+F.Intrinsic.String.Concat("delete from ATG_MOVE_TCKT_SETUP where TRMNL='",V.Screen.Form1!txtTrmnl.Text,"'",V.Local.sDelete)
+F.ODBC.Connection!Con.Execute(V.Local.sDelete)
+
+'remove the line from the view
+Gui.Form1.lvw1.RemoveItem(V.Global.sKey)
+'call sub to clear text boxes
+F.Intrinsic.Control.CallSub(Cmdclear_click)
+
+program.sub.cmddelete_click.end
+
+program.sub.cmdadd_click.start
+
+
+V.Local.sTrmnl.Declare(String)
+V.Local.Sel.Declare(String)
+
+'format terminal to 3 characters
+V.Local.sTrmnl.Set(V.Screen.Form1!txtTrmnl.Text)
+	F.Intrinsic.String.LPad(V.Local.sTrmnl.Trim,"0",3,V.Local.sTrmnl)
+
+'add record to table
+F.Intrinsic.String.Concat("select * from ATG_MOVE_TCKT_SETUP where TRMNL='",V.Local.sTrmnl.Trim,"'",V.Local.Sel)
+F.ODBC.Connection!Con.OpenRecordsetRW("rstX",V.Local.Sel)
+'if record does not already exists for the entered terminal, add a new record
+	F.Intrinsic.Control.If(V.ODBC.Con!rstX.EOF,=,True)
+		F.ODBC.Con!rstX.AddNew
+			F.ODBC.Con!rstX.Set!TRMNL(V.Local.sTrmnl.Trim)
+	F.Intrinsic.Control.endif
+'otherwise, just update the comment
+			F.ODBC.Con!rstX.Set!COMMENTS(V.Screen.Form1!txtComment.Text)
+			F.ODBC.Con!rstX.Set!Printer(V.Screen.Form1!txtPrinter.Text)
+			F.ODBC.Con!rstX.Set!ScrapPrinter(V.Screen.Form1!txtScrapPrinter.Text)
+		F.ODBC.Con!rstX.Update
+F.ODBC.Con!rstX.Close
+
+'add terminal and comment to list view
+'Gui.Form1.lvw1.AddListItem(V.Local.sTrmnl.Trim,V.Local.sTrmnl)
+'Gui.Form1.lvw1.SetListItemSubItemText(V.Local.sTrmnl.Trim,1,V.Screen.Form1!txtComment.Text)
+'Gui.Form1.lvw1.SetListItemSubItemText(V.Local.sTrmnl.Trim,2,V.Screen.Form1!txtPrinter.Text)
+
+Gui.Form1.lvw1.ClearItems
+F.Intrinsic.Control.CallSub(Buildlistview)
+
+'call sub to clear the text boxes
+F.Intrinsic.Control.CallSub(Cmdclear_click)
+
+program.sub.cmdadd_click.end
+
+program.sub.lvw1_click.start
+
+V.Local.sRet.Declare(String)
+V.Local.sOrd.Declare(String)
+V.Local.iOrd.Declare(Long)
+
+'get the item key
+Gui.Form1.lvw1.RetrieveSelectedListItems(V.Local.iOrd)
+	F.Intrinsic.String.LPad(V.Local.iOrd,"0",3,V.Global.sKey)
+'get the item ordinal
+Gui.Form1.lvw1.RetrieveItemOrdinal(V.Global.sKey,V.Global.iOrdinal)
+
+'get the line of text
+V.Local.sRet.Set(V.Screen.Form1!lvw1.ListItemTextExtended(V.Global.iOrdinal))
+'split to get trmnl and comment
+	F.Intrinsic.String.Split(V.Local.sRet,"*!*",V.Local.sRet)
+'write values to text boxes
+	Gui.Form1.txtTrmnl.Text(V.Local.sRet(0).Trim)
+	Gui.Form1.txtComment.Text(V.Local.sRet(1).Trim)
+	Gui.Form1.txtPrinter.Text(V.Local.sRet(2).Trim)
+	Gui.Form1.txtScrapPrinter.Text(V.Local.sRet(3).Trim)
+
+
+program.sub.lvw1_click.end
+
+program.sub.cmdclear_click.start
+
+'clear text boxes
+
+Gui.Form1.txtComment.Text("")
+Gui.Form1.txtTrmnl.Text("")
+Gui.Form1.txtPrinter.Text("")
+Gui.Form1.txtScrapPrinter.Text("")
+
+program.sub.cmdclear_click.end
+
+Program.Sub.BuildListView.Start
+V.Local.sSel.Declare(String)
+
+'look for existing records and load list view
+F.Intrinsic.String.Concat("select * from ATG_MOVE_TCKT_SETUP","",V.Local.sSel)
+F.ODBC.Connection!Con.OpenRecordsetRW("rstX",V.Local.sSel)
+	F.Intrinsic.Control.DoUntil(V.ODBC.Con!rstX.EOF,=,True)
+		Gui.Form1.lvw1.AddListItem(V.ODBC.Con!rstX.FieldValTrim!TRMNL,V.ODBC.Con!rstX.FieldValTrim!TRMNL)
+		Gui.Form1.lvw1.SetListItemSubItemText(V.ODBC.Con!rstX.FieldValTrim!TRMNL,1,V.ODBC.Con!rstX.FieldValTrim!COMMENTS)
+		Gui.Form1.lvw1.SetListItemSubItemText(V.ODBC.Con!rstX.FieldValTrim!TRMNL,2,V.ODBC.Con!rstX.FieldValTrim!Printer)
+		Gui.Form1.lvw1.SetListItemSubItemText(V.ODBC.Con!rstX.FieldValTrim!TRMNL,3,V.ODBC.Con!rstX.FieldValTrim!ScrapPrinter)
+	F.ODBC.Con!rstX.MoveNext
+	F.Intrinsic.Control.Loop
+F.ODBC.Con!rstX.Close
+
+
+
+
+
+
+
+Program.Sub.BuildListView.End
+
+Program.Sub.Printerdialog.Start
+V.Local.Printer.Declare(String)
+F.Intrinsic.Printer.SelectPrinterDialog
+V.Local.Printer.Set("")
+Gui.Form1.txtPrinter.Text(V.Local.Printer)
+
+
+
+Program.Sub.Printerdialog.End
+
+
