@@ -1,0 +1,109 @@
+﻿Program.Sub.ScreenSU.Start
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+'Coded by: TVR
+'Project Start Date: 1/25/2024
+'Hooks:
+'49752 (Custom Scan Prefix)
+'49762 (Script 3 button)
+'49710 (Populate hook)
+'30245 (Label Pre-process hook)
+'Written for International Packaging Corp.
+		'Coded by: SMC
+		'Project Start Date: 7/5/2011
+		'Hooks:
+		'  OLS001 CUSTOM SCAN PREFIX (On-line GUI) (000015752)
+			' Scan prefix %/123456000
+		'  WO label Populate Hook (000030230)
+		' Script 3 button hook (000015780)
+		' GUI populate hook (000015710)
+		
+		'Notes:
+		'  'Wrote for Dejong VT
+		'  Modified for Pemco/Preferred Display
+
+V.Local.sFile.Declare(String)
+V.Local.sText.Declare(String)
+V.Local.bExists.Declare(Boolean)
+V.Local.sScandata.Declare(String)
+V.Local.sJob.Declare(String)
+V.Local.sSuffix.Declare(String)
+V.Local.sMsg.Declare
+V.Local.iReturn.Declare
+
+F.Intrinsic.String.Concat(V.Caller.FilesDir,"\WOLabel",V.Caller.Terminal,".txt",V.Local.sFile)
+F.Intrinsic.Control.SelectCase(V.Caller.Hook)
+
+F.Intrinsic.Control.Case(15780)
+'GUI script 3 button
+	F.Intrinsic.String.Concat(V.Passed.009990,"*!*",V.Passed.009991,V.Local.sText)
+	F.Intrinsic.File.String2File(V.Local.sFile,V.Local.sText)
+	F.Global.General.CallWrappersync(50,"ORD172/W")
+	F.Intrinsic.File.DeleteFile(V.Local.sText)
+F.Intrinsic.Control.Case(15752)
+'GUI custom scan hook
+	V.Local.sScandata.Set(V.Passed.000007)
+	F.Intrinsic.String.Mid(V.Local.sScandata,3,6,V.Local.sJob)
+	F.Intrinsic.String.Mid(V.Local.sScandata,9,3,V.Local.sSuffix)
+	F.Intrinsic.String.Concat(V.Local.sJob,"*!*",V.Local.sSuffix,V.Local.sText)
+	F.Intrinsic.File.String2File(V.Local.sFile,V.Local.sText)
+	F.Global.General.CallWrappersync(50,"ORD172/W")
+	F.Intrinsic.File.DeleteFile(V.Local.sText)
+	
+F.Intrinsic.Control.Case(30230)
+'WO Label populate hook
+	F.Intrinsic.File.Exists(V.Local.sFile,V.Local.bExists)
+	F.Intrinsic.Control.If(V.Local.bExists,=,True)
+		F.Intrinsic.File.File2String(V.Local.sFile,V.Local.sText)
+		F.Intrinsic.String.Split(V.Local.sText,"*!*",V.Local.sText)
+		V.Passed.000030.Set(V.Local.sText(0))
+		V.Passed.000031.Set(V.Local.sText(1))
+		F.Intrinsic.File.DeleteFile(V.Local.sFile)
+	F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.Case(15710)
+'GUI populate hook
+	V.Passed.000021.Set("WO Label")
+F.Intrinsic.Control.Case(49710)
+'SFDC Populate Hook
+	F.Intrinsic.String.Replace(V.Passed.MainFormView-windowsUIButtonPanel-1,"Script 3","WO Label",V.Passed.MainFormView-windowsUIButtonPanel-1)
+
+F.Intrinsic.Control.Case(49752)
+'SFDC Custom Scan Hook
+	V.Local.sScandata.Set(V.Passed.ScanData)
+	F.Intrinsic.String.Mid(V.Local.sScandata,1,6,V.Local.sJob)
+	F.Intrinsic.String.Mid(V.Local.sScandata,7,3,V.Local.sSuffix)
+	F.Intrinsic.String.Concat(V.Local.sJob,"*!*",V.Local.sSuffix,V.Local.sText)
+	F.Intrinsic.File.String2File(V.Local.sFile,V.Local.sText)
+	F.Global.General.CallWrappersync(50,"ORD172/W")
+	F.Intrinsic.File.DeleteFile(V.Local.sText)
+F.Intrinsic.Control.Case(49762)
+'SFDC Script 3 button
+	F.Intrinsic.String.Replace(V.Passed.MainFormView-buttonEditWorkOrder,"-","*!*",V.Local.sText)
+	F.Intrinsic.File.String2File(V.Local.sFile,V.Local.sText)
+	F.Global.General.CallWrappersync(50,"ORD172/W")
+	F.Intrinsic.File.DeleteFile(V.Local.sText)
+
+F.Intrinsic.Control.Case(30245)
+'Label pre-process hook
+	F.Intrinsic.String.Build("Are you sure you want to print {0} labels?",V.Passed.000014,V.Local.sMsg)
+	F.Intrinsic.UI.Msgbox(V.Local.sMsg,,4,V.Local.iReturn)
+	F.Intrinsic.Control.If(V.Local.iReturn,=,V.Ambient.MsgBoxNo)
+		V.Passed.777777.Set(1)
+	F.Intrinsic.Control.EndIf
+	F.Intrinsic.Control.End
+F.Intrinsic.Control.EndSelect
+
+'F.Intrinsic.Debug.ShowCallerInfo
+F.Intrinsic.Control.End
+
+Program.Sub.Main.End
+
+Program.Sub.Comments.Start
+${$5$}$2.0.0.0$}$2
+${$6$}$triley$}$20240125143413973$}$iK6nerqp9nur1h1iSBfRKBBz1ENCgYv6gZKCqq2CZYr7pDRNUAjeU8iR9jkjxcmZwoKjOYj0nG4=
+Program.Sub.Comments.End
