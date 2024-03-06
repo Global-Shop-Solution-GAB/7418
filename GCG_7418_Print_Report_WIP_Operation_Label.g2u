@@ -10,7 +10,6 @@ Gui.SS_Form1..alwaysontop(False)
 Gui.SS_Form1..fontname("Arial")
 Gui.SS_Form1..fontsize(8)
 Gui.SS_Form1..forecolor(0)
-Gui.SS_Form1..fontstyle()
 Gui.SS_Form1..BackColor(-2147483633)
 Gui.SS_Form1..controlbox(True)
 Gui.SS_Form1..maxbutton(False)
@@ -85,7 +84,6 @@ Gui.SS_Form1.cmd_lvw1Delete.enabled(True)
 Gui.SS_Form1.cmd_lvw1Delete.fontname("Arial")
 Gui.SS_Form1.cmd_lvw1Delete.fontsize(8)
 Gui.SS_Form1.cmd_lvw1Delete.event(Click,cmdprnt_click)
-Gui.SS_Form1.cmd_lvw1Delete.SetInternationalID(171500)
 Gui.SS_Form1.cmd_lvw1Delete.defaultvalue("")
 Gui.SS_Form1.cmd_lvw1Delete.controlgroup(0)
 Gui.SS_Form1.cmd_lvw1Clear.create(button)
@@ -320,8 +318,8 @@ F.Intrinsic.Control.If(V.Caller.Hook,=,"50610")
 	F.Intrinsic.Math.ConvertToFloat(V.global.sqty,V.global.sqtyn)
 	F.Intrinsic.Math.ConvertToFloat(V.Screen.SS_Form1!txtLblQty.Text,V.Local.slblqtyn)
 	F.Intrinsic.Math.Div(V.global.sqtyn,V.Local.slblqtyn,V.global.sqty)
-	
-	V.Local.sEmployee.Set(V.Passed.Employee)
+	V.Local.sWC.Set(V.Global.sWC)
+	V.Local.sEmployee.Set(V.Passed.EmployeeName)
 	F.Intrinsic.Control.If(V.Global.sCloseflag,=,False)
 		V.Local.sCloseflag.Set(0)
 	F.Intrinsic.Control.Else
@@ -369,7 +367,6 @@ F.Intrinsic.Control.If(V.Caller.Hook,=,"50621")
 	F.Intrinsic.Math.ConvertToFloat(V.global.sqty,V.global.sqtyn)
 	F.Intrinsic.Math.ConvertToFloat(V.Screen.SS_Form1!txtLblQty.Text,V.Local.slblqtyn)
 	F.Intrinsic.Math.Div(V.global.sqtyn,V.Local.slblqtyn,V.global.sqty)
-
 
 	V.Local.sWC.Set(V.Passed.WC)
 	V.Local.sEmployee.Set(V.Passed.EMPLOYEE)
@@ -552,7 +549,7 @@ f.Global.BI.startlogging(v.Local.iBIRunId,v.Local.iRptId,-1,"",v.Local.iLogID)
 '	F.Intrinsic.Control.DoUntil(V.Local.scounter,<,1)
 '		F.Global.BI.PrintReport(V.Local.iRptId,3,V.Local.sParams,V.Local.sValues,V.Local.sTPrinter,True)
 F.Global.BI.StopLogging(v.Local.iLogID)
-F.Global.BI.RunReportPreProcessor(V.Local.iBIRunId,V.Local.iLogID,V.Local.sParams,V.Local.sValues,V.Local.iRptId,16,True,"",V.Local.slblqtyn,V.Local.sTPrinter,-1,"","",V.Local.iRet)
+F.Global.BI.RunReportPreProcessor(V.Local.iBIRunId,V.Local.iLogID,V.Local.sParams,V.Local.sValues,V.Local.iRptId,8,True,"",V.Local.slblqtyn,V.Local.sTPrinter,-1,"","",V.Local.iRet)
 '	F.Intrinsic.Math.Sub(V.Local.scounter,1,V.Local.scounter)
 '	F.Intrinsic.Control.Loop
 
@@ -622,6 +619,7 @@ F.Intrinsic.Control.EndIf
 F.Intrinsic.Control.Endif
 
 Program.Sub.cmdprnt_click.End
+
 Program.Sub.LoadGrid.Start
 V.Local.sSel.Declare(String)
 V.Local.sPrct.Declare(String)
@@ -787,5 +785,5 @@ Program.Sub.LoadScreen.End
 
 Program.Sub.Comments.Start
 ${$5$}$2.0.0.0$}$2
-${$6$}$triley$}$20240226125602090$}$iK6nerqp9nur1h1iSBfRKBBz1ENCgYv6BbOeVngkhpPCaQ5BeVkvHHqhkPzIdbOfEnmuqyEz12o=
+${$6$}$triley$}$20240304140939378$}$iK6nerqp9nur1h1iSBfRKBBz1ENCgYv6yVK43zAxaq6IFoZQPTEBKl1ghkayaRB+gx2iN0Q+XSo=
 Program.Sub.Comments.End
