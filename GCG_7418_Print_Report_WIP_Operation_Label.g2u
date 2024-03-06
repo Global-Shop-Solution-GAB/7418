@@ -708,6 +708,7 @@ Program.Sub.lvw1_itemclick.End
 
 Program.Sub.LoadScreen.Start
 V.Local.sSel.Declare
+
 'verify trmnl is on ATG_Move_Tckt_Setup to be able to print label/comments
 F.Intrinsic.String.Concat("select * from ATG_MOVE_TCKT_SETUP where TRMNL='",V.Caller.Terminal,"'",V.Local.sSel)
 F.ODBC.Connection!Con.OpenRecordsetRO("rstX2",V.Local.sSel)
@@ -731,6 +732,8 @@ F.Intrinsic.Control.SelectCase(V.Global.sGoodPieces)
 		V.global.sqty.Set(".000000")
 	F.Intrinsic.Control.Case(".00000")
 		V.global.sqty.Set(".000000")
+	F.Intrinsic.Control.Case("0")
+		V.global.sqty.Set(".000000")
 	F.Intrinsic.Control.CaseElse
 		V.global.sqty.Set(V.Global.sGoodPieces)
 F.Intrinsic.Control.EndSelect
@@ -747,6 +750,8 @@ F.Intrinsic.Control.SelectCase(V.Global.sScrapPieces)
 	F.Intrinsic.Control.Case(".0000")
 		V.global.sscrapqty.Set(".000000")
 	F.Intrinsic.Control.Case(".00000")
+		V.global.sscrapqty.Set(".000000")
+	F.Intrinsic.Control.Case("0")
 		V.global.sscrapqty.Set(".000000")
 	F.Intrinsic.Control.CaseElse
 		V.global.sscrapqty.Set(V.Global.sScrapPieces)
@@ -785,5 +790,5 @@ Program.Sub.LoadScreen.End
 
 Program.Sub.Comments.Start
 ${$5$}$2.0.0.0$}$2
-${$6$}$triley$}$20240304140939378$}$iK6nerqp9nur1h1iSBfRKBBz1ENCgYv6yVK43zAxaq6IFoZQPTEBKl1ghkayaRB+gx2iN0Q+XSo=
+${$6$}$triley$}$20240306105755819$}$iK6nerqp9nur1h1iSBfRKBBz1ENCgYv6yVK43zAxaq5G1oXr91WscOo6Ht40UkZEPq9bLecuiS0=
 Program.Sub.Comments.End
