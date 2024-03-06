@@ -35,6 +35,9 @@ V.Local.sJob.Declare(String)
 V.Local.sSuffix.Declare(String)
 V.Local.sMsg.Declare
 V.Local.iReturn.Declare
+V.Local.iRows.Declare
+V.Local.sRow.Declare
+V.Local.iCnt.Declare
 
 F.Intrinsic.String.Concat(V.Caller.FilesDir,"\WOLabel",V.Caller.Terminal,".txt",V.Local.sFile)
 F.Intrinsic.Control.SelectCase(V.Caller.Hook)
@@ -83,10 +86,27 @@ F.Intrinsic.Control.Case(49752)
 	F.Intrinsic.File.DeleteFile(V.Local.sText)
 F.Intrinsic.Control.Case(49762)
 'SFDC Script 3 button
-	F.Intrinsic.String.Replace(V.Passed.MainFormView-buttonEditWorkOrder,"-","*!*",V.Local.sText)
-	F.Intrinsic.File.String2File(V.Local.sFile,V.Local.sText)
-	F.Global.General.CallWrappersync(50,"ORD172/W")
-	F.Intrinsic.File.DeleteFile(V.Local.sText)
+	F.Intrinsic.Variable.PassedExists("MainFormView-buttonEditWorkOrder",V.Local.bExists)
+	F.Intrinsic.Control.If(V.Local.bExists)
+		F.Intrinsic.String.Replace(V.Passed.MainFormView-buttonEditWorkOrder,"-","*!*",V.Local.sText)
+		F.Intrinsic.File.String2File(V.Local.sFile,V.Local.sText)
+		F.Global.General.CallWrappersync(50,"ORD172/W")
+		F.Intrinsic.File.DeleteFile(V.Local.sText)
+	F.Intrinsic.Control.Else
+		F.Intrinsic.BDF.Load("Jobs","MainFormView-gridViewOperations-bdf",True)
+		F.Intrinsic.BDF.ReadRowCount("Jobs",V.Local.iRows)
+		F.Intrinsic.Math.Sub(V.Local.iRows,1,V.Local.iRows)
+		F.Intrinsic.Control.For(V.Local.iCnt,0,V.Local.iRows,1)
+			F.Intrinsic.BDF.ReadRow("Jobs",V.Local.iCnt,V.Local.sRow)
+			F.Intrinsic.String.Split(V.Local.sRow,"|~|",V.Local.sRow)
+			F.Intrinsic.Control.If(V.Local.sRow(0),=,"True")
+				F.Intrinsic.String.Replace(V.Local.sRow(2),"-","*!*",V.Local.sText)
+				F.Intrinsic.File.String2File(V.Local.sFile,V.Local.sText)
+				F.Global.General.CallWrappersync(50,"ORD172/W")
+				F.Intrinsic.File.DeleteFile(V.Local.sText)
+			F.Intrinsic.Control.EndIf
+		F.Intrinsic.Control.Next(V.Local.iCnt)
+	F.Intrinsic.Control.EndIf
 
 F.Intrinsic.Control.Case(30245)
 'Label pre-process hook
@@ -105,5 +125,5 @@ Program.Sub.Main.End
 
 Program.Sub.Comments.Start
 ${$5$}$2.0.0.0$}$2
-${$6$}$triley$}$20240125143413973$}$iK6nerqp9nur1h1iSBfRKBBz1ENCgYv6gZKCqq2CZYr7pDRNUAjeU8iR9jkjxcmZwoKjOYj0nG4=
+${$6$}$triley$}$20240202130820570$}$iK6nerqp9nur1h1iSBfRKBBz1ENCgYv6blaZNAGTTHbColZs6Q1U5OGyRqU8vIwLYydfmG+J6Lo=
 Program.Sub.Comments.End
